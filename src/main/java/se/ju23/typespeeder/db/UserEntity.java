@@ -87,4 +87,36 @@ public class UserEntity {
         result = 31 * result + (gamename != null ? gamename.hashCode() : 0);
         return result;
     }
+
+    public static UserEntity createUser(String username, String password, int gamelevel, String gamename) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("PersistenceUnitName");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+
+            UserEntity newUser = new UserEntity();
+            newUser.setUsername(username);
+            newUser.setPassword(password);
+            newUser.setGamelevel(gamelevel);
+            newUser.setGamename(gamename);
+
+            entityManager.persist(newUser);
+
+            transaction.commit();
+
+            return newUser;
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Failed to create user", e);
+        } finally {
+            entityManager.close();
+            entityManagerFactory.close();
+        }
+    }
+
 }
+
