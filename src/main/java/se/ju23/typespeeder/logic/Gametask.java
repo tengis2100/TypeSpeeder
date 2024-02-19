@@ -63,6 +63,34 @@ public class Gametask implements GametaskInterface {
         this.solution = solution;
     }
 
+    private String userInput;
+
+    public String getUserInput() {
+        return this.userInput;
+    }
+
+    public void setUserInput(String userInput) {
+        this.userInput = userInput;
+    }
+
+    private long startTime;
+    private long endTime;
+
+    public void startGame() {
+        this.startTime = System.currentTimeMillis();
+    }
+
+    public void endGame() {
+        this.endTime = System.currentTimeMillis();
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

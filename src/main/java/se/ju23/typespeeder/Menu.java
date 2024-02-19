@@ -1,12 +1,21 @@
 package se.ju23.typespeeder;
 
+import se.ju23.typespeeder.db.LeaderboardDAO;
+
 import se.ju23.typespeeder.db.UserDAO;
 import se.ju23.typespeeder.db.UserEntity;
+import se.ju23.typespeeder.logic.Game;
+import se.ju23.typespeeder.logic.Gametask;
 import se.ju23.typespeeder.logic.GametaskInterface;
+import se.ju23.typespeeder.logic.GametaskDAO;
+
+import se.ju23.typespeeder.db.Leaderboard;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Menu implements MenuService {
 
@@ -16,6 +25,9 @@ MenuService mu;
 
 GametaskInterface gti;
 
+LeaderboardDAO lb;
+
+LeaderboardDAO ldb;
 
         private UserDAO userDAO;
 
@@ -58,6 +70,75 @@ GametaskInterface gti;
         }
         scanner.close();
     }
+
+
+        public void playGameAndCalculateLeaderboard(UserEntity user) {
+        Game game = new Game();
+
+        Gametask gametask = getGametaskFromDatabase();
+
+        game.startChallenge(gametask);
+
+        double speed = game.calculateSpeed(gametask);
+        int mostRights = game.calculateMostRights(gametask);
+        String mostRightsInOrder = game.calculateMostRightsInOrder(gametask);
+        double average = game.calculateAverage(speed, mostRights, mostRightsInOrder);
+
+        updateLeaderboard(user.getUserid(), speed, mostRights, mostRightsInOrder, average);
+    }
+
+    private Gametask getGametaskFromDatabase() {
+        // Retrieve a Gametask object from the database using GametaskDAO
+        // Example:
+        return gametaskDAO.getGametask(); // Implement this method in GametaskDAO
+    }
+
+    private double calculateSpeed(Gametask gametask, long startTime, long endTime, int totalWordsTyped) {
+        long timeTakenInMillis = endTime - startTime;
+
+        double timeTakenInMinutes = TimeUnit.MILLISECONDS.toMinutes(timeTakenInMillis);
+
+        return totalWordsTyped / timeTakenInMinutes;
+    }
+
+    private int calculateMostRights(Gametask gametask, String userInput) {
+        String[] correctWords = gametask.getSolution().split("\\s+");
+        String[] typedWords = userInput.split("\\s+");
+
+        int correctWordsCount = 0;
+
+        // Count the number of correct words typed by the user
+        for (int i = 0; i < correctWords.length && i < typedWords.length; i++) {
+            if (correctWords[i].equals(typedWords[i])) {
+                correctWordsCount++;
+            } else {
+                break; // Break the loop as soon as a word is mistyped
+            }
+        }
+
+        return correctWordsCount;
+    }
+
+        private String calculateMostRightsInOrder(Gametask gametask) {
+            return "";
+        }
+
+        private double calculateAverage(double speed, int mostRights, String mostRightsInOrder) {
+            return (speed + mostRights + mostRightsInOrder.length()) / 3; // Example calculation
+        }
+
+        private void updateLeaderboard(long userId, double speed, int mostRights, String mostRightsInOrder, double average) {
+
+            Leaderboard leaderboard = new Leaderboard();
+            leaderboard.setPlayerid(userId);
+            leaderboard.setSpeed(speed);
+            leaderboard.setMostrights(mostRights);
+            leaderboard.setMostrightInorder(mostRightsInOrder);
+            leaderboard.setAverage(average);
+        }
+
+
+
 
     private void createUserFromMenu() {
         Scanner scanner = new Scanner(System.in);
