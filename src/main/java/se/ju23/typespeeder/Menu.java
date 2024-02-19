@@ -29,10 +29,12 @@ LeaderboardDAO lb;
 
 LeaderboardDAO ldb;
 
+        private GametaskDAO gametaskDAO;
         private UserDAO userDAO;
 
         public Menu() {
             this.userDAO = new UserDAO();
+            this.gametaskDAO = new GametaskDAO();
         }
 
     public static void main(String[] args) {
@@ -72,25 +74,28 @@ LeaderboardDAO ldb;
     }
 
 
-        public void playGameAndCalculateLeaderboard(UserEntity user) {
+    public void playGameAndCalculateLeaderboard(UserEntity user) {
         Game game = new Game();
 
         Gametask gametask = getGametaskFromDatabase();
 
         game.startChallenge(gametask);
 
-        double speed = game.calculateSpeed(gametask);
-        int mostRights = game.calculateMostRights(gametask);
-        String mostRightsInOrder = game.calculateMostRightsInOrder(gametask);
-        double average = game.calculateAverage(speed, mostRights, mostRightsInOrder);
+        long startTime = gametask.getStartTime();
+        long endTime = gametask.getEndTime();
+        String userInput = gametask.getUserInput();
+        int totalWordsTyped = userInput.split("\\s+").length;
+
+        double speed = calculateSpeed(gametask, startTime, endTime, totalWordsTyped);
+        int mostRights = calculateMostRights(gametask, userInput);
+        String mostRightsInOrder = calculateMostRightsInOrder(gametask);
+        double average = calculateAverage(speed, mostRights, mostRightsInOrder);
 
         updateLeaderboard(user.getUserid(), speed, mostRights, mostRightsInOrder, average);
     }
 
     private Gametask getGametaskFromDatabase() {
-        // Retrieve a Gametask object from the database using GametaskDAO
-        // Example:
-        return gametaskDAO.getGametask(); // Implement this method in GametaskDAO
+        return gametaskDAO.getGametask();
     }
 
     private double calculateSpeed(Gametask gametask, long startTime, long endTime, int totalWordsTyped) {
@@ -120,7 +125,7 @@ LeaderboardDAO ldb;
     }
 
         private String calculateMostRightsInOrder(Gametask gametask) {
-            return "";
+            return "1";
         }
 
         private double calculateAverage(double speed, int mostRights, String mostRightsInOrder) {

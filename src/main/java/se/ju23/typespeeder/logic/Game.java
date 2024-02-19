@@ -11,7 +11,7 @@ public class Game {
             scanner = new Scanner(System.in);
         }
 
-        public void startGame(Gametask gametask) {
+        public void startChallenge(Gametask gametask) {
             String wordFromDatabase = gametask.getSolution();
 
             System.out.println("Type the following word:");
