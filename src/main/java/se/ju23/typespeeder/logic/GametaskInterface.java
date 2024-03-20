@@ -8,9 +8,9 @@ public interface GametaskInterface {
 
     void setTaskId(long taskId);
 
-    Object getLanguage();
+    String getLanguage();
 
-    void setLanguage(Object language);
+    void setLanguage(String language);
 
     int getTaskType();
 

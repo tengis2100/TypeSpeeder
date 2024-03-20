@@ -28,7 +28,7 @@ public class GametaskDAO {
     private Gametask mapResultSetToGametask(ResultSet resultSet) throws SQLException {
         Gametask gametask = new Gametask();
         gametask.setTaskId(resultSet.getLong("task_id"));
-        gametask.setLanguage(resultSet.getObject("language"));
+        gametask.setLanguage(resultSet.getString("language"));
         gametask.setTaskType(resultSet.getInt("task_type"));
         gametask.setCreatedTimestamp(resultSet.getDate("created_timestamp"));
         gametask.setSolution(resultSet.getString("solution"));
@@ -48,7 +48,7 @@ public class GametaskDAO {
                         // Map the ResultSet to a Gametask object
                         Gametask gametask = new Gametask();
                         gametask.setTaskId(resultSet.getLong("task_id"));
-                        gametask.setLanguage(resultSet.getObject("language"));
+                        gametask.setLanguage(resultSet.getString("language"));
                         gametask.setTaskType(resultSet.getInt("task_type"));
                         gametask.setCreatedTimestamp(resultSet.getDate("created_timestamp"));
                         gametask.setSolution(resultSet.getString("solution"));

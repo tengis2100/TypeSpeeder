@@ -9,10 +9,10 @@ public class Gametask implements GametaskInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "task_id", nullable = false)
-    private long taskId;
+    private Long taskId;
     @Basic
     @Column(name = "language", nullable = false)
-    private Object language;
+    private String language;
     @Basic
     @Column(name = "task_type", nullable = false)
     private int taskType;
@@ -27,15 +27,18 @@ public class Gametask implements GametaskInterface {
         return taskId;
     }
 
+    public Gametask() {
+    }
+
     public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
 
-    public Object getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Object language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
@@ -62,7 +65,7 @@ public class Gametask implements GametaskInterface {
     public void setSolution(String solution) {
         this.solution = solution;
     }
-
+    @Transient
     private String userInput;
 
     public String getUserInput() {
@@ -72,8 +75,9 @@ public class Gametask implements GametaskInterface {
     public void setUserInput(String userInput) {
         this.userInput = userInput;
     }
-
+@Transient
     private long startTime;
+    @Transient
     private long endTime;
 
     public void startGame() {

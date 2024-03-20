@@ -11,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import org.mockito.Mockito;
+import se.ju23.typespeeder.Menu;
+import se.ju23.typespeeder.MenuService;
 
 import static org.mockito.Mockito.*;
 
@@ -105,7 +107,7 @@ public class MenuTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         Menu menu = new Menu();
-        menu.displayMenu();
+        menu.startMenu(); //rätt metod
 
         String consoleOutput = outContent.toString();
         assertTrue(consoleOutput.contains("Välj språk (svenska/engelska):"), "Menu should prompt for language selection.");

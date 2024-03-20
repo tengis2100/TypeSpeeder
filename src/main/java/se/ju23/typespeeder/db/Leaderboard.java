@@ -27,6 +27,17 @@ public class Leaderboard {
     @Column(name = "playerid", nullable = true)
     private Long playerid;
 
+    public Leaderboard() {
+    }
+
+    public Leaderboard(long leaderboardId, Double average, Double speed, Integer mostrights, String mostrightInorder, String resultcol) {
+        this.average = average;
+        this.speed = speed;
+        this.mostrights = mostrights;
+        this.mostrightInorder = mostrightInorder;
+        this.resultcol = resultcol;
+    }
+
     public long getLeaderboardId() {
         return leaderboardId;
     }

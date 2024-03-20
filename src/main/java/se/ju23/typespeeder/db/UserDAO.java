@@ -1,5 +1,6 @@
 package se.ju23.typespeeder.db;
 
+import org.springframework.stereotype.Component;
 import se.ju23.typespeeder.db.UserEntity;
 
 import java.sql.Connection;
@@ -7,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@Component
 public class UserDAO {
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/type_speeder";
     private static final String JDBC_USERNAME = "tgs";

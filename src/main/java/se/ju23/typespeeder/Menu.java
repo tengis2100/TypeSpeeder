@@ -1,5 +1,6 @@
 package se.ju23.typespeeder;
 
+import org.springframework.stereotype.Component;
 import se.ju23.typespeeder.db.LeaderboardDAO;
 
 import se.ju23.typespeeder.db.UserDAO;
@@ -12,87 +13,140 @@ import se.ju23.typespeeder.logic.GametaskDAO;
 import se.ju23.typespeeder.db.Leaderboard;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+@Component
 
 public class Menu implements MenuService {
 
- UserEntity ue;
+    private GametaskDAO gametaskDAO;
+    private UserDAO userDAO;
+    private Scanner scanner;
+    private List<String> options = new ArrayList<>();
 
-MenuService mu;
 
-GametaskInterface gti;
+    public Menu(Scanner scanner) {
+        this.userDAO = new UserDAO();
+        this.gametaskDAO = new GametaskDAO();
+        this.scanner = scanner;
+        options.add("Option 1");
+        options.add("Option 2");
+        options.add("Option 3");
+        options.add("Option 4");
+        options.add("Option 5");
+    }
 
-LeaderboardDAO lb;
-
-LeaderboardDAO ldb;
-
-        private GametaskDAO gametaskDAO;
-        private UserDAO userDAO;
-
-        public Menu() {
-            this.userDAO = new UserDAO();
-            this.gametaskDAO = new GametaskDAO();
-        }
-
+    public Menu() {
+        this.userDAO = new UserDAO();
+        this.gametaskDAO = new GametaskDAO();
+        this.scanner = new Scanner(System.in);
+        options.add("Option 1");
+        options.add("Option 2");
+        options.add("Option 3");
+        options.add("Option 4");
+        options.add("Option 5");
+    }
     public static void main(String[] args) {
         Menu menu = new Menu();
         menu.startMenu();
     }
 
     public void startMenu() {
-        Scanner scanner = new Scanner(System.in);
-        int choice = 0;
+        System.out.println("Välj språk (svenska/engelska):");
 
-        while (choice != 3) {
-            System.out.println("Menu:");
-            System.out.println("1. Create new user");
-            System.out.println("2. Delete user");
-            System.out.println("3. Exit");
-            System.out.print("Enter your choice: ");
+        String languageChoice = scanner.nextLine().trim().toLowerCase();
 
-            choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    createUserFromMenu();
-                    break;
-                case 2:
-                    deleteUserFromMenu();
-                    break;
-                case 3:
-                    System.out.println("Exiting menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 3.");
-            }
+        switch (languageChoice) {
+            case "engelska":
+                displayMenu();
+                break;
+            case "svenska":
+                displayMenu();
+                System.out.println("Svenska valt.");
+                break;
+            default:
+                System.out.println("Ogiltigt val. Standardinställning till engelska.");
+                displayMenu();
         }
-        scanner.close();
+    }
+    @Override
+
+    public <T extends Enum<T> & Messagable>void displayMenu( Class <T> menu){
+        T[] list = menu.getEnumConstants();
+
+        for (int i = 0; i < list.length; i++) {
+            System.out.println(i+1 + ". " + list[i].getMassage());
+        }
+        System.out.println();
+
+    }
+
+    public <T extends Messagable> T getUserChoise(T[] options){
+        int choise = 0;
+        do {
+            System.out.println("Choose an option: ");
+            try {
+                choise = scanner.nextInt();
+                scanner.nextLine();
+            } catch (InputMismatchException ex) {
+                System.out.println("Wrong input , try again");
+                scanner.nextLine();
+                continue;
+            }
+        }while(choise > options.length || choise < 1);
+        return options[choise-1];
     }
 
 
-    public void playGameAndCalculateLeaderboard(UserEntity user) {
-        Game game = new Game();
+    public void userMenu(String language) {
+        System.out.println("Meny (" + language + "):");
+        System.out.println("1. Skapa ny användare");
+        System.out.println("2. Ta bort användare");
+        System.out.println("3. Avsluta");
+        System.out.print("Ange ditt val: ");
 
-        Gametask gametask = getGametaskFromDatabase();
+        int choice = scanner.nextInt();
+        scanner.nextLine();
 
-        game.startChallenge(gametask);
-
-        long startTime = gametask.getStartTime();
-        long endTime = gametask.getEndTime();
-        String userInput = gametask.getUserInput();
-        int totalWordsTyped = userInput.split("\\s+").length;
-
-        double speed = calculateSpeed(gametask, startTime, endTime, totalWordsTyped);
-        int mostRights = calculateMostRights(gametask, userInput);
-        String mostRightsInOrder = calculateMostRightsInOrder(gametask);
-        double average = calculateAverage(speed, mostRights, mostRightsInOrder);
-
-        updateLeaderboard(user.getUserid(), speed, mostRights, mostRightsInOrder, average);
+        switch (choice) {
+            case 1:
+                createUserFromMenu();
+                break;
+            case 2:
+                deleteUserFromMenu();
+                break;
+            case 3:
+                System.out.println("Avslutar meny...");
+                break;
+            default:
+                System.out.println("Ogiltigt val. Ange ett nummer mellan 1 och 3.");
+        }
     }
+
+
+
+
+
+//    public void playGameAndCalculateLeaderboard(UserEntity user) {
+//        Game game = new Game();
+//
+//        Gametask gametask = getGametaskFromDatabase();
+//
+//        game.startChallenge(gametask);
+//
+//        long startTime = gametask.getStartTime();
+//        long endTime = gametask.getEndTime();
+//        String userInput = gametask.getUserInput();
+//        int totalWordsTyped = userInput.split("\\s+").length;
+//
+//        double speed = calculateSpeed(gametask, startTime, endTime, totalWordsTyped);
+//        int mostRights = calculateMostRights(gametask, userInput);
+//        String mostRightsInOrder = calculateMostRightsInOrder(gametask);
+//        double average = calculateAverage(speed, mostRights, mostRightsInOrder);
+//
+//        updateLeaderboard(user.getUserid(), speed, mostRights, mostRightsInOrder, average);
+//    }
 
     private Gametask getGametaskFromDatabase() {
         return gametaskDAO.getGametask();
@@ -124,28 +178,26 @@ LeaderboardDAO ldb;
         return correctWordsCount;
     }
 
-        private String calculateMostRightsInOrder(Gametask gametask) {
-            return "1";
-        }
+    private String calculateMostRightsInOrder(Gametask gametask) {
+        return "1";
+    }
 
-        private double calculateAverage(double speed, int mostRights, String mostRightsInOrder) {
-            return (speed + mostRights + mostRightsInOrder.length()) / 3; // Example calculation
-        }
+    private double calculateAverage(double speed, int mostRights, String mostRightsInOrder) {
+        return (speed + mostRights + mostRightsInOrder.length()) / 3; // Example
+    }
 
-        private void updateLeaderboard(long userId, double speed, int mostRights, String mostRightsInOrder, double average) {
+    private void updateLeaderboard(long userId, double speed, int mostRights, String mostRightsInOrder, double average) {
 
-            Leaderboard leaderboard = new Leaderboard();
-            leaderboard.setPlayerid(userId);
-            leaderboard.setSpeed(speed);
-            leaderboard.setMostrights(mostRights);
-            leaderboard.setMostrightInorder(mostRightsInOrder);
-            leaderboard.setAverage(average);
-        }
-
-
+        Leaderboard leaderboard = new Leaderboard();
+        leaderboard.setPlayerid(userId);
+        leaderboard.setSpeed(speed);
+        leaderboard.setMostrights(mostRights);
+        leaderboard.setMostrightInorder(mostRightsInOrder);
+        leaderboard.setAverage(average);
+    }
 
 
-    private void createUserFromMenu() {
+    public void createUserFromMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -153,14 +205,14 @@ LeaderboardDAO ldb;
         String password = scanner.nextLine();
         System.out.print("Enter game level: ");
         int gameLevel = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         System.out.print("Enter game name: ");
         String gameName = scanner.nextLine();
 
         createUser(username, password, gameLevel, gameName);
     }
 
-    private void deleteUserFromMenu() {
+    public void deleteUserFromMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter user ID to delete: ");
         long userId = scanner.nextLong();
@@ -168,54 +220,36 @@ LeaderboardDAO ldb;
         deleteUser(userId);
     }
 
-        public void createUser(String username, String password, int gameLevel, String gameName) {
-            boolean success = userDAO.createUser(username, password, gameLevel, gameName);
-            if (success) {
-                System.out.println("User created");
-            } else {
-                System.out.println("Failed to create user. Please try again.");
-            }
+    public void createUser(String username, String password, int gameLevel, String gameName) {
+        boolean success = userDAO.createUser(username, password, gameLevel, gameName);
+        if (success) {
+            System.out.println("User created");
+        } else {
+            System.out.println("Failed to create user. Please try again.");
         }
+    }
 
-        public void deleteUser(long userId) {
-            boolean success = userDAO.deleteUser(userId);
-            if (success) {
-                System.out.println("User deleted");
-            } else {
-                System.out.println("Failed to delete user. Please try again.");
-            }
+    public void deleteUser(long userId) {
+        System.out.println("vilken id vill du ta bort");
+        boolean success = userDAO.deleteUser(userId);
+        if (success) {
+            System.out.println("User deleted");
+        } else {
+            System.out.println("Failed to delete user. Please try again.");
         }
+    }
 
     @Override
     public List<String> getMenuOptions() {
-        return null;
+        return options;
     }
 
-    @Override
-    public void displayMenu() {
 
+    public void displayMenu() {
+        List<String> options = getMenuOptions();
+        System.out.println("Menu:");
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ". " + options.get(i));
+        }
     }
 }
-
-
-
-//    @Override
-//    public List<String> getMenuOptions() {
-//        List<String> options = new ArrayList<>();
-//        options.add("Option 1");
-//        options.add("Option 2");
-//        options.add("Option 3");
-//        options.add("Option 4");
-//        options.add("Option 5");
-//        return options;
-//    }
-//
-//    @Override
-//    public void displayMenu() {
-//        List<String> options = getMenuOptions();
-//        System.out.println("Menu:");
-//        for (int i = 0; i < options.size(); i++) {
-//            System.out.println((i + 1) + ". " + options.get(i));
-//        }
-//    }
-

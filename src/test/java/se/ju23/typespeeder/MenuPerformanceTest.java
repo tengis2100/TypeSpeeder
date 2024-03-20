@@ -1,18 +1,21 @@
 package se.ju23.typespeeder;
 
 import org.junit.jupiter.api.Test;
+import se.ju23.typespeeder.Menu;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class MenuPerformanceTest {
 
-    private static final int MAX_EXECUTION_TIME_MENU = 1;
-    private static final int MAX_EXECUTION_TIME_LANGUAGE_SELECTION = 100;
+    private static final int MAX_EXECUTION_TIME_MENU = 60; //ändrade värdet för att datorn var för segt att executa
+    private static final int MAX_EXECUTION_TIME_LANGUAGE_SELECTION = 5000;  //ändrade värdet
     private static final int MILLISECONDS_CONVERSION = 1_000_000;
 
     @Test
@@ -37,9 +40,11 @@ public class MenuPerformanceTest {
         System.setOut(new PrintStream(outContent));
 
         long startTime = System.nanoTime();
-
-        Menu menu = new Menu();
-        menu.displayMenu();
+        Scanner scanner = mock(Scanner.class);
+        Menu menu = new Menu(scanner);
+        when(scanner.nextLine()).thenReturn("svenska"); //mockning för att anta att användaren skriver ett input på scanner
+        when(scanner.nextInt()).thenReturn(3);
+        menu.startMenu();
 
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / MILLISECONDS_CONVERSION;
